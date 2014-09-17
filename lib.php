@@ -1,7 +1,8 @@
 <?
 require_once ('ebay/eBay.php');
-//error_reporting(E_ALL);
-//ini_set('display_errors', 1);
+include_once ('ebay/uploadPhoto.php');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 class ebayAccount extends Ebay{
     public function __construct(){
@@ -9,7 +10,20 @@ class ebayAccount extends Ebay{
    	    initKeys();
 		parent::__construct($appID,$devID,$certID,$RuName,$serverUrl, $userToken,$compatabilityLevel, $siteID);		
 	}	
+	// GIVES ME ALL ENUMERATIONS NEEDED!
+	public function getEbayDetails(){
+        $session = new eBaySession('GeteBayDetails',$this);
+		$xml = '<?xml version="1.0" encoding="utf-8"?>
+					<GeteBayDetailsRequest xmlns="urn:ebay:apis:eBLBaseComponents">
+					<RequesterCredentials>
+                                <eBayAuthToken>'.$this->userToken.'</eBayAuthToken>
+	                </RequesterCredentials>
 	
+					</GeteBayDetailsRequest>';	
+		$responseXml = $session->sendHttpRequest($xml);      
+		//echo $xml;                  
+        return $responseXml;
+	}
 	public function getCategoriesRequest($cat=NULL){
         $session = new eBaySession('GetCategories',$this);
 		$xml = '<?xml version="1.0" encoding="utf-8"?
@@ -44,7 +58,7 @@ class ebayAccount extends Ebay{
 		return $this->getCategories(new Category("",$id,"",$level));
 	}
 	
-	public function verifyAddItem(){
+	public function verifyAddItem($img){
         $session = new eBaySession('VerifyAddItem',$this);
 		$description = "test";
 		$title = "TITLE";
@@ -56,7 +70,7 @@ class ebayAccount extends Ebay{
 		$quantity = 2;
 		$listingType = "FixedPriceItem";
 		$location ="US";
-		$dispatchTime = 7;
+		$dispatchTime = 2;
 		$listingDuration = "Days_10";
 		$xml = '<?xml version="1.0" encoding="utf-8"?>
 				<VerifyAddItemRequest xmlns="urn:ebay:apis:eBLBaseComponents">
@@ -76,8 +90,24 @@ class ebayAccount extends Ebay{
 						 <ListingType>'.$listingType.'</ListingType>					
 						 <ListingDuration>'.$listingDuration.'</ListingDuration>
 						 <Location>'.$location.'</Location>
-						 <ShippingDetails>			 
+						 <ShippingDetails>
+						 	  <ShippingType>Flat</ShippingType>
+							  <ShippingServiceOptions>
+								<ShippingServicePriority>1</ShippingServicePriority>
+								<ShippingService>USPSMedia</ShippingService>
+								<ShippingServiceCost>2.50</ShippingServiceCost>
+							  </ShippingServiceOptions>			 
 						 </ShippingDetails>
+						 <PictureDetails>
+						   <PictureURL>'.$img.'</PictureURL>
+						 </PictureDetails>
+						 <ReturnPolicy>
+						 	<ReturnsAcceptedOption>ReturnsAccepted</ReturnsAcceptedOption>
+					        <RefundOption>MoneyBack</RefundOption>
+					        <ReturnsWithinOption>Days_30</ReturnsWithinOption>
+							<Description>If you are not satisfied, return the book for refund.</Description>
+ 					        <ShippingCostPaidByOption>Buyer</ShippingCostPaidByOption>
+						 </ReturnPolicy>
 						 <DispatchTimeMax>'.$dispatchTime.'</DispatchTimeMax>
 							<PaymentMethods>PayPal</PaymentMethods>
 							<PayPalEmailAddress>nikatlas@gmail.com</PayPalEmailAddress>

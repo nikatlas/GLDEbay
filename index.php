@@ -2,7 +2,13 @@
 require "lib.php";
 
 $ebay = new ebayAccount();
-echo $ebay->verifyAddItem();
+
+
+// SUCCESSFULLY VERIFIED ADD ITEM !!! NEED TO ADJUST VARIABLES!
+// echo $ebay->verifyAddItem("http://i.ebayimg.com/00/s/NjQwWDk2MA==/z/P4wAAOSwQItUGVPt/$_1.JPG?set_id=8800005007"); 
+ 
+// Upload photo to EPS Working just fine!
+//uploadPhotoToEps("icon.png" , $ebay->userToken);
 
 /*
 TODO!!!!

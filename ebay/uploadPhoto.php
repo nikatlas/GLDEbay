@@ -86,6 +86,8 @@ function uploadPhotoToEps($img ,$token){
     print "<P>picNameOut = $picNameOut </P>\n";
     print "<P>picURL = $picURL</P>\n";
     print "<IMG SRC=\"$picURL\">";
+	
+	return $picURL;
 }
 ?>
 
